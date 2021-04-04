@@ -1,2 +1,2 @@
 # MyCondominium-api
-api for My Condominium aplication
+api rest using mongoose for My Condominium aplication
