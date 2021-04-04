@@ -26,19 +26,25 @@ router.get("/:id", async (req, res) => {
     })
 });
 
-router.post("/create", async (req, res) => {
+router.post("/", async (req, res) => {
     const {name, ap, block} = req.body;
-
+    let blockWithNewUser = [];
     const people = new People({name, ap, block});
     people.save((err, doc) => {
         if (err){
             return res.status(501).json({error: err});
         }
-        return res.status(200).json({ user: doc });
+        Block.findById(block).exec((err,value)=> {
+            blockWithNewUser = value;
+            blockWithNewUser.peoples.push(doc._id)
+            Block.findByIdAndUpdate(block, blockWithNewUser).exec((err,value)=> {});
+        })
+
+        return res.status(200).json({ people: doc });
     });
 });
 
-router.put("/update/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
 
     Block.findByIdAndUpdate({_id: req.body.oldBlock.id}, req.body.oldBlock).exec((err,value)=> {})
     Block.findByIdAndUpdate({_id: req.body.newBlock.id}, req.body.newBlock).exec((err,value)=> {})
@@ -58,7 +64,7 @@ router.put("/update/:id", async (req, res) => {
         })
 });
 
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
     People.findByIdAndDelete({_id: req.params.id}, (err, people) => {
         if(err){
             res.json({ people: people, success: false, msg: "Failed to delete people" });

@@ -25,7 +25,7 @@ router.get("/:id", async (req, res) => {
     })
 });
 
-router.post("/create", async (req, res) => {
+router.post("/", async (req, res) => {
     const {name} = req.body;
 
     const block = new Block({name});
@@ -37,11 +37,12 @@ router.post("/create", async (req, res) => {
     });
 });
 
-router.put("/update/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
         let block = {
         name: req.body.name,
         peoples: req.body.peoples,
     }
+    console.log(block, req.params);
     Block.findByIdAndUpdate({_id: req.params.id}, block, {new: true}).exec(
         (err,value) => {
             if(err){
@@ -53,7 +54,7 @@ router.put("/update/:id", async (req, res) => {
 
 });
 
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
     Block.findByIdAndDelete({_id: req.params.id}, (err, block) => {
         if(err){
             res.json({ block: block, success: false, msg: "Failed to delete block" });

@@ -7,10 +7,9 @@ const blockSchema = new Schema({
         required: true
     },
     peoples: {
-        type: [Schema.Types.ObjectId],
+        type: [Object],
         required: false,
         default: []
     },
-});
-const Block = mongoose.model("Block", blockSchema);
-module.exports = Block;
+}, {collection: 'Block'});
+module.exports = mongoose.model('Block', blockSchema);
