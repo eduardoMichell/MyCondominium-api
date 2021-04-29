@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Block = require("../models/Block");
+const People = require("../models/People");
 
 
 router.get("/", async (req, res) => {
@@ -29,11 +30,11 @@ router.post("/", async (req, res) => {
     const {name} = req.body;
 
     const block = new Block({name});
-    block.save((err, doc) => {
-        if (err){
+    await block.save((err, doc) => {
+        if (err) {
             return res.status(501).json({error: err});
         }
-        return res.status(200).json({ user: doc });
+        return res.status(200).json({user: doc});
     });
 });
 
@@ -42,7 +43,8 @@ router.put("/:id", async (req, res) => {
         name: req.body.name,
         peoples: req.body.peoples,
     }
-    console.log(block, req.params);
+
+
     Block.findByIdAndUpdate({_id: req.params.id}, block, {new: true}).exec(
         (err,value) => {
             if(err){
@@ -50,7 +52,7 @@ router.put("/:id", async (req, res) => {
             } else {
                 res.send(value)
             }
-        })
+    })
 
 });
 

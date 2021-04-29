@@ -11,7 +11,7 @@ const peopleSchema = new Schema({
         required: true
     },
     block: {
-        type: Object,
+        type: Schema.Types.ObjectId,
         required: true,
     }
 }, {collection: 'People'});

@@ -30,30 +30,28 @@ router.post("/", async (req, res) => {
     const {name, ap, block} = req.body;
     let blockWithNewUser = [];
     const people = new People({name, ap, block});
-    people.save((err, doc) => {
-        if (err){
+    await people.save((err, doc) => {
+        if (err) {
             return res.status(501).json({error: err});
         }
-        Block.findById(block).exec((err,value)=> {
+        Block.findById(block).exec((err, value) => {
             blockWithNewUser = value;
-            blockWithNewUser.peoples.push(doc._id)
-            Block.findByIdAndUpdate(block, blockWithNewUser).exec((err,value)=> {});
+            blockWithNewUser.peoples.push(people)
+            Block.findByIdAndUpdate(block, blockWithNewUser).exec((err, value) => {
+            });
         })
 
-        return res.status(200).json({ people: doc });
+        return res.status(200).json({people: doc});
     });
 });
 
 router.put("/:id", async (req, res) => {
-
-    Block.findByIdAndUpdate({_id: req.body.oldBlock.id}, req.body.oldBlock).exec((err,value)=> {})
-    Block.findByIdAndUpdate({_id: req.body.newBlock.id}, req.body.newBlock).exec((err,value)=> {})
-
-    let people = {
+      let people = {
         name: req.body.name,
         ap: req.body.ap,
-        block: req.body.newBlock,
+        block: req.body.block,
     }
+
     People.findByIdAndUpdate({_id: req.params.id}, people, {new: true}).exec(
         (err,value) => {
             if(err){
@@ -64,6 +62,25 @@ router.put("/:id", async (req, res) => {
         })
 });
 
+router.put("/updatePeople/:id", async (req, res) => {
+     let people = {
+        name: req.body.name,
+        ap: req.body.ap,
+        block: req.body.block,
+    }
+
+    People.findByIdAndUpdate({_id: req.params.id}, people, {new: true}).exec(
+        (err,value) => {
+            if(err){
+                res.send(err)
+            } else {
+                res.send(value)
+            }
+        })
+});
+
+
+
 router.delete("/:id", async (req, res) => {
     People.findByIdAndDelete({_id: req.params.id}, (err, people) => {
         if(err){
@@ -72,6 +89,6 @@ router.delete("/:id", async (req, res) => {
             res.json({ people: people, success: true, msg: "People deleted"  });
         }
     })
-});
+})
 
 module.exports = router;
